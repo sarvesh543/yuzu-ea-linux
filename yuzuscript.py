@@ -1,6 +1,7 @@
 import os
 import sys
 import requests
+import shutil
 
 
 appDir = "~/.local/share/applications"
@@ -24,8 +25,8 @@ def findVersionNumber():
         try:
             verNum = int(dirList[0][8:len(dirList[0]) - 9])
             return verNum
-        except ValueError:
-            os.rmdir('./yuzu-ea')
+        except Exception as e:
+            shutil.rmtree('./yuzu-ea' , ignore_errors=True)
             os.mkdir('./yuzu-ea')
             return 0
     else:
@@ -66,11 +67,13 @@ if nextVer == 0:
     os.system('echo "Already on latest version"')
     os.system('echo "Launching Yuzu"')
     os.chdir(os.path.expanduser(f'{appDir}/yuzu-ea'))
-    os.system(f'./Yuzu-EA-{currVer}.AppImage')
+    out = os.system(f'./Yuzu-EA-{currVer}.AppImage')
+    if out != 0:
+        os.system('echo "corrupt version, Downloading Again..."')
+        updateAndReplace(currVer, currVer)
     sys.exit(0)
 else:
     os.system('echo "update available"')
     os.system('echo "Downloading update"')
     updateAndReplace(currVer,nextVer)
-
 
