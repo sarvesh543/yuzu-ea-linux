@@ -18,7 +18,7 @@ def findVersionNumber():
     dirList = os.listdir('./yuzu-ea')
 
     if len(dirList) > 1:
-        os.rmdir('./yuzu-ea')
+        shutil.rmtree('./yuzu-ea', ignore_errors=True)
         os.mkdir('./yuzu-ea')
         return 0
     elif len(dirList) == 1:
@@ -66,6 +66,7 @@ nextVer = checkIfNextVerExist(currVer)
 if nextVer == 0:
     os.system('echo "Already on latest version"')
     os.system('echo "Launching Yuzu"')
+    os.system(f'echo "if installation is corrupt, delete the folder [{appDir}/yuzu-ea]"')
     os.chdir(os.path.expanduser(f'{appDir}/yuzu-ea'))
     out = os.system(f'./Yuzu-EA-{currVer}.AppImage')
     if out != 0:
