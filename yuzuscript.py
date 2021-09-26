@@ -9,24 +9,31 @@ sourceDownloadLink = "https://github.com/pineappleEA/pineapple-src/releases/down
 
 
 def findVersionNumber():
+    ## returns 0 if the current version is not found
     os.chdir(os.path.expanduser(appDir))
-    if os.path.exists(os.path.expanduser(f'{appDir}/yuzu')) == False:
-        os.mkdir('./yuzu')
+    if os.path.exists(os.path.expanduser(f'{appDir}/yuzu-ea')) == False:
+        os.mkdir('./yuzu-ea')
 
-    dirList = os.listdir('./yuzu')
+    dirList = os.listdir('./yuzu-ea')
 
     if len(dirList) > 1:
-        os.rmdir('./yuzu')
-        os.mkdir('./yuzu')
+        os.rmdir('./yuzu-ea')
+        os.mkdir('./yuzu-ea')
         return 0
     elif len(dirList) == 1:
-        verNumStr = dirList[0][8:len(dirList[0]) - 9]
-        return int(verNumStr)
+        try:
+            verNum = int(dirList[0][8:len(dirList[0]) - 9])
+            return verNum
+        except ValueError:
+            os.rmdir('./yuzu-ea')
+            os.mkdir('./yuzu-ea')
+            return 0
     else:
         return 0
 
 
-def checkIfNextVerExist(currVer):    
+def checkIfNextVerExist(currVer): 
+    ## returns 0 if current ver is the latest  
     response = requests.get(f'{sourceLink}')
     latestVerUrl = response.url
     nextVerStr = latestVerUrl[61:]
@@ -39,11 +46,9 @@ def checkIfNextVerExist(currVer):
 
 
 def updateAndReplace(currVer,nextVer):
-    os.chdir(os.path.expanduser(appDir))
-    if currVer != 0:
-        os.chdir(os.path.expanduser(appDir))        
-        os.remove(f'./yuzu/Yuzu-EA-{currVer}.AppImage')
-    os.chdir(os.path.expanduser(f'{appDir}/yuzu'))
+    os.chdir(os.path.expanduser(f'{appDir}/yuzu-ea'))
+    if currVer != 0:       
+        os.remove(f'./Yuzu-EA-{currVer}.AppImage')
     os.system(f'wget "{sourceDownloadLink}EA-{nextVer}/Yuzu-EA-{nextVer}.AppImage"')
     os.system('echo "download complete"')
     os.system(f'chmod +x Yuzu-EA-{nextVer}.AppImage')
@@ -60,7 +65,7 @@ nextVer = checkIfNextVerExist(currVer)
 if nextVer == 0:
     os.system('echo "Already on latest version"')
     os.system('echo "Launching Yuzu"')
-    os.chdir(os.path.expanduser(f'{appDir}/yuzu'))
+    os.chdir(os.path.expanduser(f'{appDir}/yuzu-ea'))
     os.system(f'./Yuzu-EA-{currVer}.AppImage')
     sys.exit(0)
 else:
