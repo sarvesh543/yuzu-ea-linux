@@ -48,12 +48,19 @@ def checkIfNextVerExist(currVer):
 
 def updateAndReplace(currVer,nextVer):
     os.chdir(os.path.expanduser(f'{appDir}/yuzu-ea'))
-    if currVer != 0:       
-        os.remove(f'./Yuzu-EA-{currVer}.AppImage')
-    os.system(f'wget "{sourceDownloadLink}EA-{nextVer}/Yuzu-EA-{nextVer}.AppImage"')
-    os.system('echo "download complete"')
-    os.system(f'chmod +x Yuzu-EA-{nextVer}.AppImage')
-    os.system('echo "Launching Yuzu"')
+    if requests.head(f'{sourceDownloadLink}EA-{nextVer}/Yuzu-EA-{nextVer}.AppImage').status_code != 404:
+        if currVer != 0:       
+            os.remove(f'./Yuzu-EA-{currVer}.AppImage')
+        os.system(f'wget "{sourceDownloadLink}EA-{nextVer}/Yuzu-EA-{nextVer}.AppImage"')
+        os.system('echo "download complete"')
+        os.system(f'chmod +x Yuzu-EA-{nextVer}.AppImage')
+        os.system('echo "Launching Yuzu"')
+        os.system(f'./Yuzu-EA-{nextVer}.AppImage')
+    else:
+        os.system('echo "AppImage for latest yuzu early access does not exist in the release"')
+        os.system('echo "Launching already existing version"')
+        os.system(f'./Yuzu-EA-{currVer}.AppImage')
+    
     os.system(f'./Yuzu-EA-{nextVer}.AppImage')
     sys.exit(0)
 
