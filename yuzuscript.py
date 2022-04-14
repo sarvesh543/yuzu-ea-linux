@@ -5,7 +5,7 @@ import shutil
 
 
 appDir = "~/.local/share/applications"
-sourceLink = "https://github.com/pineappleEA/pineapple-src/releases/latest"
+sourceLinkTags = "https://api.github.com/repos/pineappleEA/pineapple-src/tags"
 sourceDownloadLink = "https://github.com/pineappleEA/pineapple-src/releases/download/"
 
 
@@ -35,10 +35,8 @@ def findVersionNumber():
 
 def checkIfNextVerExist(currVer): 
     ## returns 0 if current ver is the latest  
-    response = requests.get(f'{sourceLink}')
-    latestVerUrl = response.url
-    nextVerStr = latestVerUrl[61:]
-    nextVer = int(nextVerStr)
+    response = requests.get(f'{sourceLinkTags}')
+    nextVer = int(response[2].name[3:])
             
     if nextVer > currVer:       
         return nextVer    
