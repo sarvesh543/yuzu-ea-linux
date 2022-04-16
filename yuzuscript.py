@@ -36,7 +36,8 @@ def findVersionNumber():
 def checkIfNextVerExist(currVer): 
     ## returns 0 if current ver is the latest  
     response = requests.get(f'{sourceLinkTags}')
-    nextVer = int(response[2].name[3:])
+    response = response.json()
+    nextVer = int(response[2]['name'][3:])
             
     if nextVer > currVer:       
         return nextVer    
